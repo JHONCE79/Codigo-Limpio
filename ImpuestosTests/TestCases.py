@@ -1,5 +1,4 @@
 import unittest
-from datetime import datetime
 
 class TestLiquidacion(unittest.TestCase):
 
@@ -26,14 +25,14 @@ class TestLiquidacion(unittest.TestCase):
 
     # Extraordinary Test Cases
     def testCalcularTotalItemExtraordinary1(self):
-        precio_unitario = 1000000
+        precio_unitario = 10000000000
         cantidad = 10
         impuestos_aplicados = 0.19
         self.assertEqual(calcular_total_item(precio_unitario, cantidad, impuestos_aplicados))
 
     def testCalcularTotalItemExtraordinary2(self):
         precio_unitario = 0.5
-        cantidad = 1000
+        cantidad = 100000000000
         impuestos_aplicados = 0.05
         self.assertEqual(calcular_total_item(precio_unitario, cantidad, impuestos_aplicados))
 
@@ -58,7 +57,7 @@ class TestLiquidacion(unittest.TestCase):
 
     def testCalcularTotalItemError4(self):
         with self.assertRaises(ValueError):
-            calcular_total_item(100, 2, -0.19)  # Negative tax rate
+            calcular_total_item(100, 2, -0.19)  # Negative
 
 
     # Test Cases "Calcular total compra" 
