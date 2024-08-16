@@ -9,38 +9,38 @@ class TestImpuestos(unittest.TestCase):
         precio_unitario = 100
         cantidad = 2
         impuestos_aplicados = 0.19  # 19% IVA
-        self.assertEqual(calcular_total_item(precio_unitario, cantidad, impuestos_aplicados))
+        self.assertEqual(calcular_total_item(precio_unitario, cantidad, impuestos_aplicados), 238)
 
     def test_CalcularTotalItemRegular2(self):
         precio_unitario = 50
         cantidad = 5
         impuestos_aplicados = 0.05  # 5% IVA
-        self.assertEqual(calcular_total_item(precio_unitario, cantidad, impuestos_aplicados))
+        self.assertEqual(calcular_total_item(precio_unitario, cantidad, impuestos_aplicados), 262.5)
 
     def test_CalcularTotalItemRegular3(self):
         precio_unitario = 150
         cantidad = 1
         impuestos_aplicados = 0
-        self.assertEqual(calcular_total_item(precio_unitario, cantidad, impuestos_aplicados))
+        self.assertEqual(calcular_total_item(precio_unitario, cantidad, impuestos_aplicados), 150)
 
     # Extraordinary Test Cases
     def test_CalcularTotalItemExtraordinary1(self):
         precio_unitario = 10000000000
         cantidad = 10
         impuestos_aplicados = 0.19
-        self.assertEqual(calcular_total_item(precio_unitario, cantidad, impuestos_aplicados))
+        self.assertEqual(calcular_total_item(precio_unitario, cantidad, impuestos_aplicados), 119000000000)
 
     def test_CalcularTotalItemExtraordinary2(self):
         precio_unitario = 0.5
         cantidad = 100000000000
         impuestos_aplicados = 0.05
-        self.assertEqual(calcular_total_item(precio_unitario, cantidad, impuestos_aplicados))
+        self.assertEqual(calcular_total_item(precio_unitario, cantidad, impuestos_aplicados), 52500000000)
 
     def test_CalcularTotalItemExtraordinary3(self):
         precio_unitario = 100
         cantidad = 0
         impuestos_aplicados = 0.19
-        self.assertEqual(calcular_total_item(precio_unitario, cantidad, impuestos_aplicados))
+        self.assertEqual(calcular_total_item(precio_unitario, cantidad, impuestos_aplicados), 0)
 
     # Error Test Cases
     def test_CalcularTotalItemError1(self):
@@ -68,21 +68,21 @@ class TestImpuestos(unittest.TestCase):
             {"precio_unitario": 100, "cantidad": 2, "impuestos_aplicados": 0.19},
             {"precio_unitario": 50, "cantidad": 1, "impuestos_aplicados": 0.05}
         ]
-        self.assertEqual(calcular_total_compra(items_comprados))
+        self.assertEqual(calcular_total_compra(items_comprados), 318.5)
 
     def test_CalcularTotalCompraRegular2(self):
         items_comprados = [
             {"precio_unitario": 20, "cantidad": 3, "impuestos_aplicados": 0},
             {"precio_unitario": 100, "cantidad": 1, "impuestos_aplicados": 0.19}
         ]
-        self.assertEqual(calcular_total_compra(items_comprados))
+        self.assertEqual(calcular_total_compra(items_comprados), 119)
 
     def test_CalcularTotalCompraRegular3(self):
         items_comprados = [
             {"precio_unitario": 10, "cantidad": 10, "impuestos_aplicados": 0.19},
             {"precio_unitario": 5, "cantidad": 5, "impuestos_aplicados": 0.05}
         ]
-        self.assertEqual(calcular_total_compra(items_comprados))
+        self.assertEqual(calcular_total_compra(items_comprados), 152.5)
 
     # Extraordinary Test Cases
     def test_CalcularTotalCompraExtraordinary1(self):
@@ -90,18 +90,18 @@ class TestImpuestos(unittest.TestCase):
             {"precio_unitario": 1000000, "cantidad": 1, "impuestos_aplicados": 0.19},
             {"precio_unitario": 50000, "cantidad": 10, "impuestos_aplicados": 0.05}
         ]
-        self.assertEqual(calcular_total_compra(items_comprados))
+        self.assertEqual(calcular_total_compra(items_comprados), 1190000)
 
     def test_CalcularTotalCompraExtraordinary2(self):
         items_comprados = [
             {"precio_unitario": 0.5, "cantidad": 1000, "impuestos_aplicados": 0.19},
             {"precio_unitario": 10, "cantidad": 100, "impuestos_aplicados": 0.05}
         ]
-        self.assertEqual(calcular_total_compra(items_comprados))
+        self.assertEqual(calcular_total_compra(items_comprados), 1045)
 
     def test_CalcularTotalCompraExtraordinary3(self):
         items_comprados = []  # Vacio
-        self.assertEqual(calcular_total_compra(items_comprados))
+        self.assertEqual(calcular_total_compra(items_comprados), 0)
 
     # Error Test Cases
     def test_CalcularTotalCompraError1(self):
