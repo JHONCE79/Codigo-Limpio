@@ -100,7 +100,7 @@ class TestLiquidacion(unittest.TestCase):
         self.assertEqual(calcular_total_compra(items_comprados))
 
     def testCalcularTotalCompraExtraordinary3(self):
-        items_comprados = []  # Empty shopping cart
+        items_comprados = []  # Vacio
         self.assertEqual(calcular_total_compra(items_comprados))
 
     # Error Test Cases
@@ -131,9 +131,5 @@ class TestLiquidacion(unittest.TestCase):
             ]
             calcular_total_compra(items_comprados)
 
-
-# Ejecutar la prueba individualmente
-"""""
 if __name__ == '__main__':
     unittest.main()
-"""""
