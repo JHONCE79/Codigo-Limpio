@@ -1,6 +1,6 @@
 import unittest
 
-class TestLiquidacion(unittest.TestCase):
+class TestImpuestos(unittest.TestCase):
 
     # Test Cases "Calcular total item" 
 
