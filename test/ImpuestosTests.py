@@ -1,147 +1,135 @@
-
 import unittest
-
 import sys
 import os
+
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'src')))
-from logic.logica import calcular_total_item , calcular_total_compra
+from logic.logica import calcular_total_item, calcular_total_compra
 
+import unittest
+from logic.logica import calcular_total_item
 
-class TestCalcularTotal(unittest.TestCase):
-
-
-    def test_calcular_total_item_iva_19(self):
-        total_impuestos, total_item = calcular_total_item(100, 2, 19)
-        self.assertEqual(total_impuestos, 38)
-        self.assertEqual(total_item, 238)
+class TestCalcularTotalItem(unittest.TestCase):
     
-    def test_calcular_total_item_iva_5(self):
-        total_impuestos, total_item = calcular_total_item(50, 3, 5)
-        self.assertEqual(total_impuestos, 7.5)
-        self.assertEqual(total_item, 157.5)
+    # Casos normales
+    def test_item_vehiculo_mayor_200cc(self):
+        # Vehículo con cilindraje mayor a 200cc, impuesto del 8%
+        total_impuestos, total_item = calcular_total_item(50000000, 1, 8)
+        self.assertAlmostEqual(total_impuestos, 4000000)
+        self.assertAlmostEqual(total_item, 54000000)
     
-    def test_calcular_total_item_exento(self):
-        total_impuestos, total_item = calcular_total_item(200, 1, "exento")
-        self.assertEqual(total_impuestos, 0)
-        self.assertEqual(total_item, 200)
+    def test_item_licor_menor_35_grados(self):
+        # Licor con grado de alcohol menor al 35%, impuesto del 25%
+        total_impuestos, total_item = calcular_total_item(100000, 2, 25)
+        self.assertAlmostEqual(total_impuestos, 50000)
+        self.assertAlmostEqual(total_item, 250000)
 
-    def test_calcular_total_item_inc_8(self):
-        total_impuestos, total_item = calcular_total_item(100, 1, 8)
-        self.assertEqual(total_impuestos, 8)
-        self.assertEqual(total_item, 108)
+    def test_item_vino_bajo_alcohol(self):
+    # Vino con grado de alcohol inferior al 14%, impuesto del 20%
+        total_impuestos, total_item = calcular_total_item(30000, 5, 20)
+        self.assertAlmostEqual(total_impuestos, 30000)
+        self.assertAlmostEqual(total_item, 180000)
 
-    def test_calcular_total_item_precio_alto_iva_19(self):
-        total_impuestos, total_item = calcular_total_item(1000, 10, 19)
-        self.assertEqual(total_impuestos, 1900)
-        self.assertEqual(total_item, 11900)
 
-    def test_calcular_total_item_cantidad_alta_iva_5(self):
-        total_impuestos, total_item = calcular_total_item(1, 10000, 5)
-        self.assertEqual(total_impuestos, 500)
-        self.assertEqual(total_item, 10500)
-
-    def test_calcular_total_item_excluido(self):
-        total_impuestos, total_item = calcular_total_item(150, 4, "excluido")
-        self.assertEqual(total_impuestos, 0)
-        self.assertEqual(total_item, 600)
+    # Casos excepcionales
+    def test_item_licor_alto_con_alcohol(self):
+        # Licor con grado de alcohol superior al 35%, impuesto del 40%
+        total_impuestos, total_item = calcular_total_item(150000, 1, 40)
+        self.assertAlmostEqual(total_impuestos, 60000)
+        self.assertAlmostEqual(total_item, 210000)
     
-    def test_calcular_total_item_error_precio_negativo(self):
+    def test_item_bolsas_plasticas(self):
+        # 10 bolsas plásticas, impuesto fijo de 66 COP por bolsa
+        total_impuestos, total_item = calcular_total_item(0, 10, 'fijo')
+        self.assertAlmostEqual(total_impuestos, 660)
+        self.assertAlmostEqual(total_item, 660)
+
+    def test_item_exento(self):
+        # Artículo exento de impuestos
+        total_impuestos, total_item = calcular_total_item(20000, 3, 'exento')
+        self.assertAlmostEqual(total_impuestos, 0)
+        self.assertAlmostEqual(total_item, 60000)
+
+    # Casos de error
+    def test_item_precio_negativo(self):
         with self.assertRaises(ValueError):
-            calcular_total_item(-100, 1, 19)
+            calcular_total_item(-10000, 1, 19)
     
-    def test_calcular_total_item_error_cantidad_negativa(self):
+    def test_item_impuesto_negativo(self):
         with self.assertRaises(ValueError):
-            calcular_total_item(100, -1, 19)
+            calcular_total_item(10000, 1, -19)
     
-    def test_calcular_total_item_error_impuesto_tipo_incorrecto(self):
+    def test_item_precio_cero(self):
+        with self.assertRaises(ValueError):
+            calcular_total_item(0, 1, 19)
+    
+    def test_item_tipo_impuesto_invalido(self):
         with self.assertRaises(TypeError):
-            calcular_total_item(100, 1, "diecinueve")
+            calcular_total_item(10000, 1, "invalido")
+
+    # Pruebas para calcular_total_compra
+
+class TestCalcularTotalCompra(unittest.TestCase):
     
-    # Pruebas para la función "Calcular total compra"
-    
-    def test_calcular_total_compra_iva_19_exento(self):
-        items = [
-            (100, 2, 19),  # IVA 19%
-            (200, 1, "exento") # Exento
-        ]
+    # Casos normales
+    def test_compra_multiples_items(self):
+        items = [(50000, 2, 19), (150000, 1, 40), (30000, 3, 20)]
         total_impuestos, total_compra = calcular_total_compra(items)
-        self.assertEqual(total_impuestos, 38)
-        self.assertEqual(total_compra, 438)
+        self.assertAlmostEqual(total_impuestos, 99500)
+        self.assertAlmostEqual(total_compra, 495500)
     
-    def test_calcular_total_compra_iva_5_excluido(self):
-        items = [
-            (50, 3, 5),    # IVA 5%
-            (150, 2, "excluido") # Excluido
-        ]
+    def test_compra_bolsas_plasticas(self):
+        items = [(10000, 1, 19), (0, 10, 'fijo')]
         total_impuestos, total_compra = calcular_total_compra(items)
-        self.assertEqual(total_impuestos, 7.5)
-        self.assertEqual(total_compra, 457.5)
-    
-    def test_calcular_total_compra_iva_19_exento(self):
-        items = [
-            (100, 1, 19),  # IVA 19%
-            (200, 1, "exento") # Exento
-        ]
+        self.assertAlmostEqual(total_impuestos, 2560)
+        self.assertAlmostEqual(total_compra, 12560)
+
+    def test_compra_exentos_y_gravados(self):
+        items = [(100000, 1, 'exento'), (20000, 5, 5)]
         total_impuestos, total_compra = calcular_total_compra(items)
-        self.assertEqual(total_impuestos, 19)
-        self.assertEqual(total_compra, 319)
+        self.assertAlmostEqual(total_impuestos, 5000)
+        self.assertAlmostEqual(total_compra, 200000)
     
-    def test_calcular_total_compra_inc_8(self):
-        items = [
-            (100, 1, 8),   # INC 8%
-            (150, 2, "exento") # Exento
-        ]
+    # Casos excepcionales
+    def test_compra_solo_exentos(self):
+        items = [(100000, 1, 'exento'), (50000, 2, 'exento')]
         total_impuestos, total_compra = calcular_total_compra(items)
-        self.assertEqual(total_impuestos, 8)
-        self.assertEqual(total_compra, 408)
+        self.assertAlmostEqual(total_impuestos, 0)
+        self.assertAlmostEqual(total_compra, 200000)
     
-    def test_calcular_total_compra_precio_alto_iva_19(self):
-        items = [
-            (5000, 2, 19), # IVA 19%
-            (10000, 1, "exento") # Exento
-        ]
+    def test_compra_alta_cantidad_items(self):
+        items = [(1000, 1000, 19), (500, 2000, 19)]
         total_impuestos, total_compra = calcular_total_compra(items)
-        self.assertEqual(total_impuestos, 1900)
-        self.assertEqual(total_compra, 21900)
+        self.assertAlmostEqual(total_impuestos, 85500)
+        self.assertAlmostEqual(total_compra, 535500)
     
-    def test_calcular_total_compra_cantidad_alta_iva_5(self):
-        items = [
-            (1, 10000, 5),    # IVA 5%
-            (2, 5000, 5) # IVA 5%
-        ]
+    def test_compra_multiples_impuestos(self):
+        items = [(100000, 1, 19), (50000, 1, 25), (20000, 2, 5)]
         total_impuestos, total_compra = calcular_total_compra(items)
-        self.assertEqual(total_impuestos, 150)
-        self.assertEqual(total_compra, 16500)
+        self.assertAlmostEqual(total_impuestos, 40500)
+        self.assertAlmostEqual(total_compra, 230000)
     
-    def test_calcular_total_compra_solo_exento(self):
-        items = [
-            (200, 3, "exento"),
-            (150, 2, "exento")
-        ]
-        total_impuestos, total_compra = calcular_total_compra(items)
-        self.assertEqual(total_impuestos, 0)
-        self.assertEqual(total_compra, 900)
-    
-    def test_calcular_total_compra_error_precio_negativo(self):
-        items = [
-            (-100, 2, 19)
-        ]
+    # Casos de error
+    def test_compra_precio_negativo(self):
+        items = [(-10000, 1, 19), (150000, 1, 40)]
         with self.assertRaises(ValueError):
             calcular_total_compra(items)
     
-    def test_calcular_total_compra_error_cantidad_negativa(self):
-        items = [
-            (100, -2, 19)
-        ]
+    def test_compra_cantidad_negativa(self):
+        items = [(10000, -1, 19), (150000, 1, 40)]
         with self.assertRaises(ValueError):
             calcular_total_compra(items)
     
-    def test_calcular_total_compra_error_impuesto_tipo_incorrecto(self):
-        items = [
-            (100, 1, "diecinueve")
-        ]
+    def test_compra_tipo_impuesto_invalido(self):
+        items = [(10000, 1, "invalido"), (150000, 1, 40)]
         with self.assertRaises(TypeError):
             calcular_total_compra(items)
+    
+    def test_compra_items_vacios(self):
+        items = []
+        total_impuestos, total_compra = calcular_total_compra(items)
+        self.assertEqual(total_impuestos, 0)
+        self.assertEqual(total_compra, 0)
+
 
 if __name__ == '__main__':
     unittest.main()
