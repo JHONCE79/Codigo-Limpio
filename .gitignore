@@ -1,4 +1,7 @@
-__init__.py
-output.py
-__pycache__
+# Este archivo contiene las rutas que se van a excluir del control de versiones con Git
+# Carpeta temporal de archivos compilados de Python
+
+.__init__
 .idea
+.output.py
+.__pycache__
