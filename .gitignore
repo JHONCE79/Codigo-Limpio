@@ -1,7 +1,8 @@
-# Este archivo contiene las rutas que se van a excluir del control de versiones con Git
-# Carpeta temporal de archivos compilados de Python
+# Ignorar el directorio .idea (configuración de IDE de JetBrains)
+.idea/
 
-.__init__
-.idea
-.output.py
-.__pycache__
+# Ignorar el archivo output.py
+output.py
+
+# Ignorar los archivos compilados de Python
+__pycache__/
