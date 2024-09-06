@@ -1,62 +1,55 @@
-
-
-
 # Programa para el Cálculo de Impuestos
 
-Este programa está diseñado para calcular el total de impuestos y el precio total de un artículo o una compra compuesta por varios artículos, teniendo en cuenta los diferentes tipos de impuestos aplicables.
+Este programa calcula el total de impuestos y el precio total de un artículo o una compra compuesta por varios artículos, teniendo en cuenta diferentes tipos de impuestos aplicables según las normativas colombianas.
 
-## Función `calcular_total_item(precio_unitario, cantidad, tipo_impuesto)`
+## Funciones
 
-Esta función se encarga de calcular el total de impuestos y el precio total de un único artículo basado en su precio unitario, cantidad y tipo de impuesto.
+### `calculate_item_total(price, quantity, tax_type)`
 
-- **Parámetros de entrada**:
-    - `precio_unitario`: Es el precio por unidad del artículo.
-    - `cantidad`: Es el número de unidades del artículo que se compran.
-    - `tipo_impuesto`: Puede ser un porcentaje (como 5% o 19% de IVA), un impuesto fijo, o "exento" si el artículo no está sujeto a impuestos.
-
-- **Proceso**:
-    - Se asegura que tanto el `precio_unitario` como la `cantidad` sean mayores que cero para evitar cálculos inválidos.
-    - Calcula los impuestos basados en el `tipo_impuesto`:
-        - Si el artículo está "exento", no se cobra ningún impuesto.
-        - Si el tipo de impuesto es "fijo", se aplica un valor de 66 pesos por cada unidad.
-        - Si es un porcentaje, se calcula el impuesto multiplicando el precio unitario, la cantidad y el porcentaje dividido entre 100.
-    - Se calcula el precio total del artículo sumando el precio sin impuestos y el total de impuestos.
-
-- **Salida**:
-    - Devuelve una tupla con el total de impuestos y el precio total del artículo, incluyendo impuestos.
-
-## Función `calcular_total_compra(items)`
-
-Esta función es una extensión de la primera y permite calcular los impuestos y el precio total de una compra con múltiples artículos.
+Calcula el total de impuestos y el precio total de un solo artículo.
 
 - **Parámetros de entrada**:
-    - `items`: Es una lista de tuplas. Cada tupla contiene el `precio_unitario`, la `cantidad`, y el `tipo_impuesto` de un artículo.
+  - `price`: Precio unitario del artículo.
+  - `quantity`: Cantidad de artículos.
+  - `tax_type`: Tipo de impuesto (porcentaje, fijo, o "exempt" para exento).
 
 - **Proceso**:
-    - Itera sobre cada artículo de la lista `items`.
-    - Para cada artículo, llama a la función `calcular_total_item` para obtener los impuestos y el precio total del artículo.
-    - Suma los impuestos y precios totales de todos los artículos de la compra.
+  - Calcula impuestos según el tipo especificado.
+  - Devuelve el total de impuestos y el precio total.
 
 - **Salida**:
-    - Devuelve una tupla con el total de impuestos y el precio total de la compra.
-    - 
-## Requisitos Previos
+  - Tupla con el total de impuestos y el precio total del artículo.
 
-Asegúrate de tener Python instalado. Puedes descargarlo desde [python.org](https://www.python.org/).
+### `calculate_total_purchase(items)`
 
-# instrucciones para ejecutar el programa 
+Calcula el total de impuestos y el precio total de una compra con múltiples artículos.
 
-1. Clona el repositorio a tu máquina local:
-   ```
+- **Parámetros de entrada**:
+  - `items`: Lista de tuplas, cada una con `(precio_unitario, cantidad, tipo_impuesto)`.
+
+- **Proceso**:
+  - Itera sobre cada artículo y suma impuestos y precios totales.
+
+- **Salida**:
+  - Tupla con el total de impuestos y el precio total de la compra.
+
+## Requisitos
+
+- Python 3.12 o superior.
+
+## Instalación y Ejecución
+
+1. **Clona el repositorio a tu máquina local**:
+   ```bash
    git clone https://github.com/JHONCE79/Codigo-Limpio.git
-   ```
+
 2. Navega al directorio del proyecto:
    ```
    cd Codigo-Limpio/
    ```
 3. Ejecutar el programa en la interfaz:
    ```
-   python src/console/interfaz.py
+   python src/console/interface.py
 
    ```
 
@@ -73,7 +66,7 @@ Proporciona instrucciones claras sobre cómo instalar y configurar el proyecto. 
    ```
 3. Ejecutar casos de prueba:
    ```
-   python test/ImpuestosTests.py
+   python test/TaxesTests.py
    ```
 
 ## Licencia MIT
