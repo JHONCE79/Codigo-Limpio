@@ -2,133 +2,144 @@ import unittest
 import sys
 import os
 
+# Ensure the path to the source code is included
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'src')))
-from logic.logica import calcular_total_item, calcular_total_compra
+from logic.logica import calculate_item_total, calculate_total_purchase
 
-import unittest
-from logic.logica import calcular_total_item
+class TestCalculateTotalItem(unittest.TestCase):
+    """Tests for the calculate_item_total function."""
 
-class TestCalcularTotalItem(unittest.TestCase):
-    
-    # Casos normales
-    def test_item_vehiculo_mayor_200cc(self):
-        # Vehículo con cilindraje mayor a 200cc, impuesto del 8%
-        total_impuestos, total_item = calcular_total_item(50000000, 1, 8)
-        self.assertAlmostEqual(total_impuestos, 4000000)
-        self.assertAlmostEqual(total_item, 54000000)
-    
-    def test_item_licor_menor_35_grados(self):
-        # Licor con grado de alcohol menor al 35%, impuesto del 25%
-        total_impuestos, total_item = calcular_total_item(100000, 2, 25)
-        self.assertAlmostEqual(total_impuestos, 50000)
-        self.assertAlmostEqual(total_item, 250000)
+    def test_vehicle_over_200cc(self):
+        """Test: Vehicle with engine capacity over 200cc should have an 8% tax."""
+        price, quantity, tax_rate = 50000000, 1, 8
+        expected_tax, expected_total = 4000000, 54000000
+        self._assert_calculation(price, quantity, tax_rate, expected_tax, expected_total)
 
-    def test_item_vino_bajo_alcohol(self):
-    # Vino con grado de alcohol inferior al 14%, impuesto del 20%
-        total_impuestos, total_item = calcular_total_item(30000, 5, 20)
-        self.assertAlmostEqual(total_impuestos, 30000)
-        self.assertAlmostEqual(total_item, 180000)
+    def test_liquor_under_35_degrees(self):
+        """Test: Liquor with alcohol content under 35% should have a 25% tax."""
+        price, quantity, tax_rate = 100000, 2, 25
+        expected_tax, expected_total = 50000, 250000
+        self._assert_calculation(price, quantity, tax_rate, expected_tax, expected_total)
 
+    def test_wine_low_alcohol(self):
+        """Test: Wine with alcohol content under 14% should have a 20% tax."""
+        price, quantity, tax_rate = 30000, 5, 20
+        expected_tax, expected_total = 30000, 180000
+        self._assert_calculation(price, quantity, tax_rate, expected_tax, expected_total)
 
-    # Casos excepcionales
-    def test_item_licor_alto_con_alcohol(self):
-        # Licor con grado de alcohol superior al 35%, impuesto del 40%
-        total_impuestos, total_item = calcular_total_item(150000, 1, 40)
-        self.assertAlmostEqual(total_impuestos, 60000)
-        self.assertAlmostEqual(total_item, 210000)
-    
-    def test_item_bolsas_plasticas(self):
-        # 10 bolsas plásticas, impuesto fijo de 66 COP por bolsa
-        total_impuestos, total_item = calcular_total_item(0, 10, 'fijo')
-        self.assertAlmostEqual(total_impuestos, 660)
-        self.assertAlmostEqual(total_item, 660)
+    def test_liquor_high_alcohol(self):
+        """Test: Liquor with alcohol content over 35% should have a 40% tax."""
+        price, quantity, tax_rate = 150000, 1, 40
+        expected_tax, expected_total = 60000, 210000
+        self._assert_calculation(price, quantity, tax_rate, expected_tax, expected_total)
 
-    def test_item_exento(self):
-        # Artículo exento de impuestos
-        total_impuestos, total_item = calcular_total_item(20000, 3, 'exento')
-        self.assertAlmostEqual(total_impuestos, 0)
-        self.assertAlmostEqual(total_item, 60000)
+    def test_plastic_bags(self):
+        """Test: Plastic bags should have a fixed tax per bag."""
+        price, quantity, tax_rate = 0, 10, 'fixed'
+        expected_tax, expected_total = 660, 660
+        self._assert_calculation(price, quantity, tax_rate, expected_tax, expected_total)
 
-    # Casos de error
-    def test_item_precio_negativo(self):
+    def test_exempt_item(self):
+        """Test: Exempt item should have no tax."""
+        price, quantity, tax_rate = 20000, 3, 'exempt'
+        expected_tax, expected_total = 0, 60000
+        self._assert_calculation(price, quantity, tax_rate, expected_tax, expected_total)
+
+    def test_negative_price(self):
+        """Test: Negative price should raise ValueError."""
         with self.assertRaises(ValueError):
-            calcular_total_item(-10000, 1, 19)
-    
-    def test_item_impuesto_negativo(self):
+            calculate_item_total(-10000, 1, 19)
+
+    def test_negative_tax(self):
+        """Test: Negative tax rate should raise ValueError."""
         with self.assertRaises(ValueError):
-            calcular_total_item(10000, 1, -19)
-    
-    def test_item_precio_cero(self):
+            calculate_item_total(10000, 1, -19)
+
+    def test_zero_price(self):
+        """Test: Zero price should raise ValueError."""
         with self.assertRaises(ValueError):
-            calcular_total_item(0, 1, 19)
-    
-    def test_item_tipo_impuesto_invalido(self):
+            calculate_item_total(0, 1, 19)
+
+    def test_invalid_tax_type(self):
+        """Test: Invalid tax type should raise TypeError."""
         with self.assertRaises(TypeError):
-            calcular_total_item(10000, 1, "invalido")
+            calculate_item_total(10000, 1, "invalid")
 
-    # Pruebas para calcular_total_compra
+    def _assert_calculation(self, price, quantity, tax_rate, expected_tax, expected_total):
+        """Helper method to assert the correctness of tax and total calculations."""
+        total_tax, total_item = calculate_item_total(price, quantity, tax_rate)
+        self.assertAlmostEqual(total_tax, expected_tax)
+        self.assertAlmostEqual(total_item, expected_total)
 
-class TestCalcularTotalCompra(unittest.TestCase):
-    
-    # Casos normales
-    def test_compra_multiples_items(self):
+
+class TestCalculateTotalPurchase(unittest.TestCase):
+    """Tests for the calculate_total_purchase function."""
+
+    def test_multiple_items(self):
+        """Test: Multiple items with different taxes."""
         items = [(50000, 2, 19), (150000, 1, 40), (30000, 3, 20)]
-        total_impuestos, total_compra = calcular_total_compra(items)
-        self.assertAlmostEqual(total_impuestos, 99500)
-        self.assertAlmostEqual(total_compra, 495500)
-    
-    def test_compra_bolsas_plasticas(self):
-        items = [(10000, 1, 19), (0, 10, 'fijo')]
-        total_impuestos, total_compra = calcular_total_compra(items)
-        self.assertAlmostEqual(total_impuestos, 2560)
-        self.assertAlmostEqual(total_compra, 12560)
+        expected_tax, expected_total = 99500, 495500
+        self._assert_purchase(items, expected_tax, expected_total)
 
-    def test_compra_exentos_y_gravados(self):
-        items = [(100000, 1, 'exento'), (20000, 5, 5)]
-        total_impuestos, total_compra = calcular_total_compra(items)
-        self.assertAlmostEqual(total_impuestos, 5000)
-        self.assertAlmostEqual(total_compra, 200000)
-    
-    # Casos excepcionales
-    def test_compra_solo_exentos(self):
-        items = [(100000, 1, 'exento'), (50000, 2, 'exento')]
-        total_impuestos, total_compra = calcular_total_compra(items)
-        self.assertAlmostEqual(total_impuestos, 0)
-        self.assertAlmostEqual(total_compra, 200000)
-    
-    def test_compra_alta_cantidad_items(self):
+    def test_plastic_bags_in_purchase(self):
+        """Test: Purchase with plastic bags and taxed items."""
+        items = [(10000, 1, 19), (0, 10, 'fixed')]
+        expected_tax, expected_total = 2560, 12560
+        self._assert_purchase(items, expected_tax, expected_total)
+
+    def test_exempt_and_taxed_items(self):
+        """Test: Purchase with both exempt and taxed items."""
+        items = [(100000, 1, 'exempt'), (20000, 5, 5)]
+        expected_tax, expected_total = 5000, 200000
+        self._assert_purchase(items, expected_tax, expected_total)
+
+    def test_only_exempt_items(self):
+        """Test: Purchase with only exempt items."""
+        items = [(100000, 1, 'exempt'), (50000, 2, 'exempt')]
+        expected_tax, expected_total = 0, 200000
+        self._assert_purchase(items, expected_tax, expected_total)
+
+    def test_high_quantity_items(self):
+        """Test: Purchase with high quantity items."""
         items = [(1000, 1000, 19), (500, 2000, 19)]
-        total_impuestos, total_compra = calcular_total_compra(items)
-        self.assertAlmostEqual(total_impuestos, 85500)
-        self.assertAlmostEqual(total_compra, 535500)
-    
-    def test_compra_multiples_impuestos(self):
+        expected_tax, expected_total = 85500, 535500
+        self._assert_purchase(items, expected_tax, expected_total)
+
+    def test_multiple_taxes(self):
+        """Test: Purchase with multiple taxes."""
         items = [(100000, 1, 19), (50000, 1, 25), (20000, 2, 5)]
-        total_impuestos, total_compra = calcular_total_compra(items)
-        self.assertAlmostEqual(total_impuestos, 40500)
-        self.assertAlmostEqual(total_compra, 230000)
-    
-    # Casos de error
-    def test_compra_precio_negativo(self):
+        expected_tax, expected_total = 40500, 230000
+        self._assert_purchase(items, expected_tax, expected_total)
+
+    def test_negative_price_in_purchase(self):
+        """Test: Negative price in any item should raise ValueError."""
         items = [(-10000, 1, 19), (150000, 1, 40)]
         with self.assertRaises(ValueError):
-            calcular_total_compra(items)
-    
-    def test_compra_cantidad_negativa(self):
+            calculate_total_purchase(items)
+
+    def test_negative_quantity_in_purchase(self):
+        """Test: Negative quantity in any item should raise ValueError."""
         items = [(10000, -1, 19), (150000, 1, 40)]
         with self.assertRaises(ValueError):
-            calcular_total_compra(items)
-    
-    def test_compra_tipo_impuesto_invalido(self):
-        items = [(10000, 1, "invalido"), (150000, 1, 40)]
+            calculate_total_purchase(items)
+
+    def test_invalid_tax_type_in_purchase(self):
+        """Test: Invalid tax type in any item should raise TypeError."""
+        items = [(10000, 1, "invalid"), (150000, 1, 40)]
         with self.assertRaises(TypeError):
-            calcular_total_compra(items)
-    
-    def test_compra_items_vacios(self):
+            calculate_total_purchase(items)
+
+    def test_empty_items_in_purchase(self):
+        """Test: Empty items list should return zero tax and total."""
         items = []
-        total_impuestos, total_compra = calcular_total_compra(items)
-        self.assertEqual(total_impuestos, 0)
-        self.assertEqual(total_compra, 0)
+        expected_tax, expected_total = 0, 0
+        self._assert_purchase(items, expected_tax, expected_total)
+
+    def _assert_purchase(self, items, expected_tax, expected_total):
+        """Helper method to assert the correctness of total tax and purchase calculations."""
+        total_tax, total_purchase = calculate_total_purchase(items)
+        self.assertAlmostEqual(total_tax, expected_tax)
+        self.assertAlmostEqual(total_purchase, expected_total)
 
 
 if __name__ == '__main__':

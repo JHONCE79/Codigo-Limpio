@@ -1,53 +1,46 @@
-def calcular_total_item(precio_unitario, cantidad, tipo_impuesto):
-    """
-    Calcula el total de impuestos y el precio total de un artículo.
-    
-    :param precio_unitario: Precio unitario del artículo (en pesos).
-    :param cantidad: Cantidad del artículo.
-    :param tipo_impuesto: Tipo de impuesto aplicable (puede ser IVA, INC, o "exento").
-    :return: Una tupla con el total de impuestos y el precio total.
-    """
-    
-    # Verificar que los valores de precio y cantidad sean positivos
-    if precio_unitario <= 0 or cantidad <= 0:
-        raise ValueError("El precio y la cantidad deben ser positivos y mayores a cero.")
-    
-    # Inicializar el total de impuestos
-    total_impuestos = 0
+# Constants
+FIXED_TAX_PER_PLASTIC_BAG = 66
 
-    # Calcular el impuesto según el tipo
-    if tipo_impuesto == "exento":
-        total_impuestos = 0
-    elif tipo_impuesto == "fijo":
-        total_impuestos = 66 * cantidad
-    elif isinstance(tipo_impuesto, (int, float)):
-        # Aplica el porcentaje del impuesto al precio unitario
-        total_impuestos = precio_unitario * cantidad * (tipo_impuesto / 100)
+def calculate_item_total(price, quantity, tax_type):
+    """
+    Calculates the total tax and the total price of an item.
+
+    :param price: Unit price of the item (in pesos).
+    :param quantity: Quantity of the item.
+    :param tax_type: Applicable tax type (can be VAT, INC, or "exempt").
+    :return: A tuple with the total tax and the total price.
+    """
+    if price <= 0:
+        raise ValueError("The unit price must be positive and greater than zero.")
+    if quantity <= 0:
+        raise ValueError("The quantity must be positive and greater than zero.")
+
+    if tax_type == "exempt":
+        return 0, price * quantity
+    
+    if tax_type == "fixed":
+        total_tax = FIXED_TAX_PER_PLASTIC_BAG * quantity
+    elif isinstance(tax_type, (int, float)):
+        total_tax = price * quantity * (tax_type / 100)
     else:
-        raise TypeError("El tipo de impuesto debe ser un número, 'fijo' o 'exento'.")
+        raise TypeError("The tax type must be a number, 'fixed' or 'exempt'.")
 
-    # Calcular el precio total del artículo
-    precio_total = precio_unitario * cantidad + total_impuestos
-    
-    return total_impuestos, precio_total
+    total_price = price * quantity + total_tax
+    return total_tax, total_price
 
-def calcular_total_compra(items):
+def calculate_total_purchase(items):
     """
-    Calcula el total de impuestos y el precio total de una compra con múltiples artículos.
-    
-    :param items: Una lista de tuplas, cada una con (precio_unitario, cantidad, tipo_impuesto).
-    :return: Una tupla con el total de impuestos y el precio total.
+    Calculates the total tax and the total price of a purchase with multiple items.
+
+    :param items: A list of tuples, each with (unit_price, quantity, tax_type).
+    :return: A tuple with the total tax and the total price.
     """
-    total_impuestos = 0
-    precio_total = 0
+    total_tax = 0
+    total_price = 0
     
-    for item in items:
-        # Desempaquetar los valores de cada artículo
-        precio_unitario, cantidad, tipo_impuesto = item
-        # Calcular los impuestos y el precio total de cada artículo
-        item_impuestos, item_total = calcular_total_item(precio_unitario, cantidad, tipo_impuesto)
-        # Sumar al total acumulado
-        total_impuestos += item_impuestos
-        precio_total += item_total
+    for unit_price, quantity, tax_type in items:
+        item_tax, item_total = calculate_item_total(unit_price, quantity, tax_type)
+        total_tax += item_tax
+        total_price += item_total
     
-    return total_impuestos, precio_total
+    return total_tax, total_price
