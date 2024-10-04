@@ -186,7 +186,6 @@ class PurchasePopup(Popup):
     def calculate_purchase(self, instance):
         items = []
         total_fixed_tax = 0  # Acumulador para el impuesto fijo de bolsas plásticas
-        total_item_price = 0  # Acumulador para el precio total de los artículos
         try:
             for price_input, quantity_input, tax_spinner in self.item_data:
                 selected_tax = tax_spinner.text
@@ -195,7 +194,6 @@ class PurchasePopup(Popup):
                 if selected_tax == 'Bolsas Plásticas (66 COP)':
                     quantity = int(quantity_input.text)
                     total_fixed_tax += quantity * FIXED_TAX_PER_PLASTIC_BAG  # Solo sumar el total del impuesto fijo
-                    total_item_price += float(price_input.text) * quantity  # Sumar el precio del artículo
                 else:
                     unit_price = float(price_input.text)
                     quantity = int(quantity_input.text)
@@ -220,10 +218,9 @@ class PurchasePopup(Popup):
 
                     # Agregar al total con precio unitario y el impuesto
                     items.append((unit_price, quantity, tax_type))
-                    total_item_price += unit_price * quantity  # Sumar el precio del artículo
 
             total_tax, total_purchase = calculate_total_purchase(items)
-            total_purchase += total_fixed_tax + total_item_price  # Sumar el impuesto fijo y el precio total de los artículos
+            total_purchase += total_fixed_tax  # Solo sumar el impuesto fijo, no el precio total de los artículos de nuevo
             self.result_label.text = f"Total Impuesto: {total_tax + total_fixed_tax:.2f}\nTotal a Pagar: {total_purchase:.2f}"
         except Exception as e:
             self.result_label.text = f"Error: {e}"
