@@ -11,7 +11,7 @@ import os
 
 # Agrega la ruta al sistema
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-from logic.logica import calculate_item_total, calculate_total_purchase 
+from logic.logica import calculate_item_total, calculate_total_purchase
 
 # Constantes
 FIXED_TAX_PER_PLASTIC_BAG = 66
@@ -63,14 +63,7 @@ class ItemPopup(Popup):
         # Dropdown para selección de impuestos
         self.tax_spinner = Spinner(
             text='Seleccione Impuesto',
-            values=( 
-                'IVA 19%', 'IVA 5%', 'Exento', 'Bolsas Plásticas (66 COP)',
-                'Vehículo mayor a 200cc (8%)', 
-                'Licores < 35% (25%)', 
-                'Licores > 35% (40%)', 
-                'Vinos < 14% (20%)', 
-                'Vinos > 14% (20%)'
-            ),
+            values=self.get_tax_values(),
             size_hint=(1, None),
             height=40
         )
@@ -91,6 +84,16 @@ class ItemPopup(Popup):
 
         self.content = layout
 
+    def get_tax_values(self):
+        return [
+            'IVA 19%', 'IVA 5%', 'Exento', 'Bolsas Plásticas (66 COP)',
+            'Vehículo mayor a 200cc (8%)', 
+            'Licores < 35% (25%)', 
+            'Licores > 35% (40%)', 
+            'Vinos < 14% (20%)', 
+            'Vinos > 14% (20%)'
+        ]
+
     def calculate_item(self, instance):
         try:
             unit_price = float(self.price_input.text)
@@ -98,35 +101,37 @@ class ItemPopup(Popup):
             selected_tax = self.tax_spinner.text
 
             # Determinar el tipo de impuesto según la selección
-            if selected_tax == 'IVA 19%':
-                tax_type = 19
-            elif selected_tax == 'IVA 5%':
-                tax_type = 5
-            elif selected_tax == 'Exento':
-                tax_type = 0
-            elif selected_tax == 'Bolsas Plásticas (66 COP)':
-                tax_type = FIXED_TAX_PER_PLASTIC_BAG  # Usar valor positivo
-            elif selected_tax == 'Vehículo mayor a 200cc (8%)':
-                tax_type = 8
-            elif selected_tax == 'Licores < 35% (25%)':
-                tax_type = 25
-            elif selected_tax == 'Licores > 35% (40%)':
-                tax_type = 40
-            elif selected_tax == 'Vinos < 14% (20%)':
-                tax_type = 20
-            elif selected_tax == 'Vinos > 14% (20%)':
-                tax_type = 20
-            
-            # Calcular el total de impuestos y el total del artículo
-            if selected_tax == 'Bolsas Plásticas (66 COP)':
-                total_tax = tax_type * quantity  # Total de impuestos para bolsas plásticas
-            else:
-                total_tax = (unit_price * tax_type / 100) * quantity  # Cálculo estándar de impuestos
-            
+            tax_type = self.get_tax_type(selected_tax)
+
+            # Calcular el total de impuestos
+            total_tax = self.calculate_tax(unit_price, quantity, tax_type)
+
+            # Calcular el total del artículo
             total_item = (unit_price * quantity) + total_tax
+
             self.result_label.text = f"Total Impuesto: {total_tax:.2f}\nTotal Ítem: {total_item:.2f}"
         except Exception as e:
             self.result_label.text = f"Error: {e}"
+
+    def get_tax_type(self, tax_name):
+        tax_types = {
+            'IVA 19%': 19,
+            'IVA 5%': 5,
+            'Exento': 0,
+            'Bolsas Plásticas (66 COP)': FIXED_TAX_PER_PLASTIC_BAG,
+            'Vehículo mayor a 200cc (8%)': 8,
+            'Licores < 35% (25%)': 25,
+            'Licores > 35% (40%)': 40,
+            'Vinos < 14% (20%)': 20,
+            'Vinos > 14% (20%)': 20
+        }
+        return tax_types.get(tax_name, 0)
+
+    def calculate_tax(self, unit_price, quantity, tax_type):
+        if tax_type == FIXED_TAX_PER_PLASTIC_BAG:
+            return quantity * tax_type
+        else:
+            return (unit_price * tax_type / 100) * quantity
 
 class PurchasePopup(Popup):
     def __init__(self, **kwargs):
@@ -164,14 +169,7 @@ class PurchasePopup(Popup):
         # Dropdown para selección de impuestos
         tax_spinner = Spinner(
             text='Seleccione Impuesto',
-            values=(
-                'IVA 19%', 'IVA 5%', 'Exento', 'Bolsas Plásticas (66 COP)',
-                'Vehículo mayor a 200cc (8%)', 
-                'Licores < 35% (25%)', 
-                'Licores > 35% (40%)', 
-                'Vinos < 14% (20%)', 
-                'Vinos > 14% (20%)'
-            ),
+            values=self.get_tax_values(),
             size_hint=(1, None),
             height=40
         )
@@ -183,48 +181,59 @@ class PurchasePopup(Popup):
 
         self.content.add_widget(item_layout)
 
+    def get_tax_values(self):
+        return [
+            'IVA 19%', 'IVA 5%', 'Exento', 'Bolsas Plásticas (66 COP)',
+            'Vehículo mayor a 200cc (8%)', 
+            'Licores < 35% (25%)', 
+            'Licores > 35% (40%)', 
+            'Vinos < 14% (20%)', 
+            'Vinos > 14% (20%)'
+        ]
+
     def calculate_purchase(self, instance):
         items = []
         total_fixed_tax = 0  # Acumulador para el impuesto fijo de bolsas plásticas
+        total_fixed_price = 0  # Acumulador para el precio total de los artículos con impuesto fijo
         try:
             for price_input, quantity_input, tax_spinner in self.item_data:
                 selected_tax = tax_spinner.text
                 
                 # Si el impuesto es por bolsas plásticas
                 if selected_tax == 'Bolsas Plásticas (66 COP)':
+                    unit_price = float(price_input.text)
                     quantity = int(quantity_input.text)
                     total_fixed_tax += quantity * FIXED_TAX_PER_PLASTIC_BAG  # Solo sumar el total del impuesto fijo
+                    total_fixed_price += unit_price * quantity  # Sumar el precio total de los artículos
                 else:
                     unit_price = float(price_input.text)
                     quantity = int(quantity_input.text)
                     
                     # Determinar el tipo de impuesto según la selección
-                    if selected_tax == 'IVA 19%':
-                        tax_type = 19
-                    elif selected_tax == 'IVA 5%':
-                        tax_type = 5
-                    elif selected_tax == 'Exento':
-                        tax_type = 0
-                    elif selected_tax == 'Vehículo mayor a 200cc (8%)':
-                        tax_type = 8
-                    elif selected_tax == 'Licores < 35% (25%)':
-                        tax_type = 25
-                    elif selected_tax == 'Licores > 35% (40%)':
-                        tax_type = 40
-                    elif selected_tax == 'Vinos < 14% (20%)':
-                        tax_type = 20
-                    elif selected_tax == 'Vinos > 14% (20%)':
-                        tax_type = 20
+                    tax_type = self.get_tax_type(selected_tax)
 
                     # Agregar al total con precio unitario y el impuesto
                     items.append((unit_price, quantity, tax_type))
 
             total_tax, total_purchase = calculate_total_purchase(items)
-            total_purchase += total_fixed_tax  # Solo sumar el impuesto fijo, no el precio total de los artículos de nuevo
+            total_purchase += total_fixed_tax + total_fixed_price  # Sumar el impuesto fijo y el precio total de los artículos
             self.result_label.text = f"Total Impuesto: {total_tax + total_fixed_tax:.2f}\nTotal a Pagar: {total_purchase:.2f}"
         except Exception as e:
             self.result_label.text = f"Error: {e}"
 
+    def get_tax_type(self, tax_name):
+        tax_types = {
+            'IVA 19%': 19,
+            'IVA 5%': 5,
+ 'Exento': 0,
+            'Bolsas Plásticas (66 COP)': FIXED_TAX_PER_PLASTIC_BAG,
+            'Vehículo mayor a 200cc (8%)': 8,
+            'Licores < 35% (25%)': 25,
+            'Licores > 35% (40%)': 40,
+            'Vinos < 14% (20%)': 20,
+            'Vinos > 14% (20%)': 20
+        }
+        return tax_types.get(tax_name, 0)
 
 class MyApp(App):
     def build(self):
