@@ -107,11 +107,11 @@ Proporciona instrucciones claras sobre cómo instalar y configurar el proyecto. 
    ```
 2. Navega al directorio del proyecto:
    ```
-   cd Codigo-Limpio/
+   cd Codigo-Limpio/test
    ```
 3. Ejecutar casos de prueba:
    ```
-   python test/TaxesTests.py
+   python -m unittest TaxesTests.py
    ```
 
 ## Licencia MIT
