@@ -80,7 +80,7 @@ pip install kivy
    ```
 3. Ejecutar el programa en la interfaz:
    ```
-   python src/console/interface.py
+   python src/GUI/interface.py
 
    ```
 

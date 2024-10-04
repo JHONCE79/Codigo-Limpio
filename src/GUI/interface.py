@@ -216,7 +216,7 @@ class PurchasePopup(Popup):
                     items.append((unit_price, quantity, tax_type))
 
             total_tax, total_purchase = calculate_total_purchase(items)
-            total_purchase += total_fixed_tax + total_fixed_price  # Sumar el impuesto fijo y el precio total de los artículos
+            total_purchase += total_fixed_tax + total_fixed_price  ## Sumar el impuesto fijo y el precio total de los artículos
             self.result_label.text = f"Total Impuesto: {total_tax + total_fixed_tax:.2f}\nTotal a Pagar: {total_purchase:.2f}"
         except Exception as e:
             self.result_label.text = f"Error: {e}"
