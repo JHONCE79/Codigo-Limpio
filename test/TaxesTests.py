@@ -58,13 +58,18 @@ class TestCalculateTotalItem(unittest.TestCase):
             calculate_item_total(10000, 1, -19)
 
     def test_zero_price(self):
-        """Test: Zero price should raise ValueError."""
-        with self.assertRaises(ValueError):
-            calculate_item_total(0, 1, 19)
+        """Test: Zero price should return zero tax and total without raising an error."""
+        # Definimos el precio como 0, cantidad como 1, y un tipo de impuesto válido.
+        price, quantity, tax_rate = 0, 1, 19
+        expected_tax, expected_total = 0, 0  # No se debe cobrar impuesto y el total debe ser 0.
+        
+        total_tax, total_item = calculate_item_total(price, quantity, tax_rate)
+        self.assertAlmostEqual(total_tax, expected_tax)
+        self.assertAlmostEqual(total_item, expected_total)
 
     def test_invalid_tax_type(self):
-        """Test: Invalid tax type should raise TypeError."""
-        with self.assertRaises(TypeError):
+        """Test: Invalid tax type should raise ValueError."""
+        with self.assertRaises(ValueError):
             calculate_item_total(10000, 1, "invalid")
 
     def _assert_calculation(self, price, quantity, tax_rate, expected_tax, expected_total):
@@ -140,9 +145,9 @@ class TestCalculateTotalPurchase(unittest.TestCase):
             calculate_total_purchase(items)
 
     def test_invalid_tax_type_in_purchase(self):
-        """Test: Invalid tax type in any item should raise TypeError."""
+        """Test: Invalid tax type in any item should raise ValueError."""
         items = [(10000, 1, "invalid"), (150000, 1, 40)]
-        with self.assertRaises(TypeError):
+        with self.assertRaises(ValueError):
             calculate_total_purchase(items)
 
     def test_empty_items_in_purchase(self):
@@ -158,5 +163,5 @@ class TestCalculateTotalPurchase(unittest.TestCase):
         self.assertAlmostEqual(total_purchase, expected_total)
 
 
-if __name__ == '__main__':
+if __name__ == '_main_':
     unittest.main()

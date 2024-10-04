@@ -36,6 +36,37 @@ Calcula el total de impuestos y el precio total de una compra con múltiples art
 ## Requisitos
 
 - Python 3.12 o superior.
+- Kivy 2.1.0 o superior
+
+# Instalación de Kivy en Windows
+
+Kivy es un marco de trabajo de código abierto diseñado para crear aplicaciones multitáctiles que son compatibles con diversas plataformas, incluida Windows. A continuación, se presentan los pasos para instalar Kivy en un sistema operativo Windows.
+
+## Requisitos Previos
+
+Asegúrate de tener Python instalado. Puedes descargarlo desde [python.org](https://www.python.org/).
+
+## Pasos para la Instalación
+
+### 1. Actualiza pip y herramientas asociadas
+Abre la terminal de comandos como administrador y ejecuta:
+```bash
+python -m pip install --upgrade pip wheel setuptools
+```
+### Paso 2: Instalar las dependencias de Kivy
+
+Para garantizar que Kivy funcione adecuadamente en tu sistema, es necesario instalar ciertas dependencias. Abre la terminal de comandos con privilegios de administrador y ejecuta el siguiente comando para instalar estas dependencias esenciales:
+
+```bash
+python -m pip install docutils pygments pypiwin32 kivy_deps.sdl2 kivy_deps.glew kivy_deps.gstreamer
+```
+### Paso 3: Instalar Kivy
+
+Después de haber instalado todas las dependencias necesarias, puedes continuar con la instalación de Kivy. Este potente framework facilita el desarrollo de aplicaciones multitáctiles y multiplataforma. Para instalar Kivy, abre la terminal de comandos con privilegios de administrador y ejecuta el siguiente comando:
+
+```bash
+pip install kivy
+```
 
 ## Instalación y Ejecución
 

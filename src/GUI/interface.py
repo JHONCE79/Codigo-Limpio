@@ -87,7 +87,7 @@ class ItemPopup(Popup):
     def get_tax_values(self):
         return [
             'IVA 19%', 'IVA 5%', 'Exento', 'Bolsas Plásticas (66 COP)',
-            'Vehículo mayor a 200cc (8%)', 
+            'Vehículo mayor a 200cc (8%)',  
             'Licores < 35% (25%)', 
             'Licores > 35% (40%)', 
             'Vinos < 14% (20%)', 

@@ -1,73 +1,81 @@
-# Constants
-FIXED_TAX_PER_PLASTIC_BAG = 66  # Sets a fixed tax rate for plastic bags.
+# Constant for fixed tax per plastic bag
+FIXED_TAX_PER_PLASTIC_BAG = 66  
+
+def validate_price(price):
+    """
+    Validates that the price is a positive number.
+    """
+    try:
+        price = float(price)
+        if price < 0:
+            raise ValueError(f"The price must be greater than or equal to zero, received {price}.")
+    except ValueError:
+        raise ValueError(f"The price must be a number, received {price}.")
+    return price
+
+def validate_quantity(quantity):
+    """
+    Validates that the quantity is a positive integer.
+    """
+    if quantity <= 0:
+        raise ValueError(f"The quantity must be greater than zero, received {quantity}.")
+    return quantity
+
+def validate_tax_type(tax_type):
+    """
+    Validates the tax type, which can be 'exempt', 'fixed', or a percentage.
+    """
+    if isinstance(tax_type, (int, float)) and tax_type < 0:
+        raise ValueError("The tax type must be a non-negative number.")
+    if not isinstance(tax_type, (int, float, str)):
+        raise TypeError("The tax type must be a number, 'fixed', or 'exempt'.")
+    return tax_type
 
 def calculate_item_total(price, quantity, tax_type):
     """
-    Calculates the total tax and the total price of an item based on the given parameters.
-
+    Calculates the total tax and total price of an item given the price, quantity, and tax type.
+    
     Args:
-        price (float): Unit price of the item (in pesos).
-        quantity (int): Quantity of the item.
-        tax_type (str or float): Applicable tax type (can be 'VAT', 'INC', 'exempt', or a percentage).
-
+        price (float): Unit price of the item.
+        quantity (int): Quantity of items.
+        tax_type (str or float): Tax type ('VAT', 'INC', 'exempt', 'fixed' or percentage).
+    
     Returns:
-        tuple: A tuple containing the total tax and the total price of the item.
+        tuple: Total tax and total price of the item.
     """
-    # Attempt to convert price to float and validate it
-    try:
-        price = float(price)
-    except ValueError:
-        raise ValueError(f"Price must be a number, got {price}")
+    price = validate_price(price)
+    quantity = validate_quantity(quantity)
+    tax_type = validate_tax_type(tax_type)
 
-    # Validate price and tax_type inputs
-    if price < 0 or (price == 0 and tax_type != "fixed"):
-        raise ValueError("Invalid price.")
-    
-    if isinstance(tax_type, (int, float)) and tax_type < 0:
-        raise ValueError("Tax rate must be non-negative.")
-    
-    if quantity <= 0:
-        raise ValueError("The quantity must be positive and greater than zero.")
-
-    # Calculate the total price before tax
     total_price = price * quantity
-    
-    # Calculate tax based on the type of tax specified
+
     if tax_type == "exempt":
-        total_tax = 0  # No tax for exempt items
+        total_tax = 0
     elif tax_type == "fixed":
-        total_tax = FIXED_TAX_PER_PLASTIC_BAG * quantity  # Fixed tax per item
+        total_tax = FIXED_TAX_PER_PLASTIC_BAG * quantity
     elif isinstance(tax_type, (int, float)):
-        total_tax = total_price * (tax_type / 100)  # Percentage based tax
+        total_tax = total_price * (tax_type / 100)
     else:
-        raise TypeError("The tax type must be a number, 'fixed' or 'exempt'.")
+        raise ValueError("Unrecognized tax type.")
 
-    # Add the calculated tax to the total price
-    total_price += total_tax
-
-    # Return both total tax and total price
-    return total_tax, total_price
+    return total_tax, total_price + total_tax
 
 def calculate_total_purchase(items):
     """
-    Calculates the total tax and total price for a list of items.
-
+    Calculates the total taxes and total price of a list of items.
+    
     Args:
-        items (list of tuples): List containing tuples of (unit_price, quantity, tax_type) for each item.
-
+        items (list of tuples): List of tuples (unit_price, quantity, tax_type).
+    
     Returns:
-        tuple: A tuple containing the total tax and total price for all items.
+        tuple: Total taxes and total purchase price.
     """
-    # Initialize total tax and price counters
     total_tax = 0
     total_price = 0
 
-    # Process each item in the list
-    for unit_price, quantity, tax_type in items:
-        # Calculate the tax and total for each item
-        item_tax, item_total = calculate_item_total(unit_price, quantity, tax_type)
-        total_tax += item_tax  # Sum up total tax
-        total_price += item_total  # Sum up total price
+    for price, quantity, tax_type in items:
+        item_tax, item_total = calculate_item_total(price, quantity, tax_type)
+        total_tax += item_tax
+        total_price += item_total
 
-    # Return the aggregate total tax and total price
     return total_tax, total_price
