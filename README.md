@@ -46,43 +46,57 @@ Kivy es un marco de trabajo de código abierto diseñado para crear aplicaciones
 
 Asegúrate de tener Python instalado. Puedes descargarlo desde [python.org](https://www.python.org/).
 
-## Pasos para la Instalación
+### Pasos para clonar el repositorio y ejecutar el proyecto en Windows
 
-### 1. Actualiza pip y herramientas asociadas
-Abre la terminal de comandos como administrador y ejecuta:
-```bash
-python -m pip install --upgrade pip wheel setuptools
-```
-### Paso 2: Instalar las dependencias de Kivy
+1. **Clonar el repositorio**:
+   - Abre una terminal o PowerShell en la ubicación donde quieres clonar el proyecto.
+   - Ejecuta el siguiente comando para clonar el repositorio:
 
-Para garantizar que Kivy funcione adecuadamente en tu sistema, es necesario instalar ciertas dependencias. Abre la terminal de comandos con privilegios de administrador y ejecuta el siguiente comando para instalar estas dependencias esenciales:
+     ```bash
+     git clone https://github.com/JHONCE79/Codigo-Limpio.git
+     ```
 
-```bash
-python -m pip install docutils pygments pypiwin32 kivy_deps.sdl2 kivy_deps.glew kivy_deps.gstreamer
-```
-### Paso 3: Instalar Kivy
+2. **Navegar al directorio del proyecto**:
+   - Después de clonar el repositorio, navega a la carpeta del proyecto:
 
-Después de haber instalado todas las dependencias necesarias, puedes continuar con la instalación de Kivy. Este potente framework facilita el desarrollo de aplicaciones multitáctiles y multiplataforma. Para instalar Kivy, abre la terminal de comandos con privilegios de administrador y ejecuta el siguiente comando:
+     ```bash
+     cd Codigo-Limpio
+     ```
 
-```bash
-pip install kivy
-```
+3. **Crear y activar un entorno virtual**:
+   - Crea el entorno virtual con este comando:
 
-## Instalación y Ejecución
+     ```bash
+     python -m venv venv
+     ```
 
-1. **Clona el repositorio a tu máquina local**:
-   ```bash
-   git clone https://github.com/JHONCE79/Codigo-Limpio.git
+   - Luego, actívalo:
 
-2. Navega al directorio del proyecto:
-   ```
-   cd Codigo-Limpio/
-   ```
-3. Ejecutar el programa en la interfaz:
-   ```
-   python src/GUI/interface.py
+     ```bash
+     venv\Scripts\activate
+     ```
 
-   ```
+4. **Instalar las dependencias**:
+
+   - Instala Kivy manualmente:
+
+     ```bash
+     python -m pip install kivy[base] kivy[angle]
+     ```
+
+5. **Navegar a la carpeta `GUI` y ejecutar `interface.py`**:
+   - Ve al directorio donde está el archivo `interface.py`:
+
+     ```bash
+     cd src/GUI
+     ```
+
+   - Luego, ejecuta el archivo con el siguiente comando:
+
+     ```bash
+     python interface.py
+     ```
+
 
 # instrucciones para ejecutar los casos de prueba
 
