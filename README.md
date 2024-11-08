@@ -1,3 +1,7 @@
+#Realizado por:
+John Steven Ceballos Agudelo 
+Felix Fabian Prada
+
 # Programa para el Cálculo de Impuestos
 
 Este programa calcula el total de impuestos y el precio total de un artículo o una compra compuesta por varios artículos, teniendo en cuenta diferentes tipos de impuestos aplicables según las normativas colombianas.
